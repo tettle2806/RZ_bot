@@ -1,0 +1,13 @@
+from fluentogram.typing_generator import ParsedRawFTL
+from fluentogram.typing_generator import Stubs
+from fluentogram.typing_generator import Tree
+
+
+def generator_test():
+    raw = ParsedRawFTL("today = Today is { DATETIME() }")
+    tree = Tree(raw.get_messages())
+    stubs = Stubs(tree)
+    print(stubs.echo())
+
+
+generator_test()

@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: fluentogram
+Version: 1.1.6
+Summary: A proper way to use an i18n mechanism with Aiogram3.
+Home-page: https://github.com/Arustinal/fluentogram
+License: MIT
+Author: Aleks
+Requires-Python: >=3.9,<4.0
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.9
+Requires-Dist: fluent-compiler (>=0.3,<0.4)
+Project-URL: Repository, https://github.com/Arustinal/fluentogram

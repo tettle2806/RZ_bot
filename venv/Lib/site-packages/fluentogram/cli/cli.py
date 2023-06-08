@@ -1,0 +1,30 @@
+# coding=utf-8
+"""
+CLI stub gen
+"""
+import argparse
+
+from fluentogram.typing_generator import ParsedRawFTL, Stubs, Tree
+
+
+def cli() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-ftl", dest="ftl_path", required=False)
+    parser.add_argument("-track-ftl", dest="track_path", required=False)
+    parser.add_argument("-dir-ftl", dest="dir_path", required=False)
+    parser.add_argument("-stub", dest="stub_path", required=False)
+
+    args = parser.parse_args()
+
+    if not args.ftl_path and not args.track_path and not args.dir_path:
+        raise ValueError("Empty request, wtf")
+
+    with open(args.ftl_path, "r", encoding="utf-8") as input_f:
+        raw = ParsedRawFTL(input_f.read())
+
+    tree = Tree(raw.get_messages())
+    stubs = Stubs(tree)
+    if args.stub_path:
+        stubs.to_file(args.stub_path)
+    else:
+        print(stubs.echo())
