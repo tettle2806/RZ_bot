@@ -2,11 +2,11 @@ import re
 
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
-from aiogram.types import ReplyKeyboardRemove
 
 from data.loader import dp, db
 from keyboards.inline import generate_menu_language
-from keyboards.reply import generate_main_menu, settings
+from keyboards.reply import generate_main_menu, settings, generate_type_of_order, generate_delivery, generate_menu, \
+    generate_location
 from states.states import NumberState
 
 
@@ -48,9 +48,29 @@ async def get_phone(message: Message, state: FSMContext):
         await again_ask_phone(message)
 
 
+@dp.message_handler(regexp='🛍 Заказать')
+async def reaction_on_order(message: Message):
+    await message.answer('Заберите свой заказ самостоятельно или выберите доставку',
+                         reply_markup=generate_type_of_order())
+
+
+@dp.message_handler(regexp='🚖 Доставка')
+async def reaction_on_delivery(message: Message):
+    await message.answer('Отправьте геолокацию или выберите адрес доставки', reply_markup=generate_delivery())
+
+
+@dp.message_handler(regexp='🏃🏻‍♂️ Самовывоз')
+async def pickup_rection(message: Message):
+    await message.answer('Выберите филиал', reply_markup=generate_location())
+
+
+@dp.message_handler(regexp='Метро Айбека')
+async def aybek_metro(message: Message):
+    await message.answer('Приступим к заказу', reply_markup=generate_menu())
+
+
 @dp.message_handler(regexp='📍 Язык')
 async def reaction_on_language(message: Message):
-    re = ReplyKeyboardRemove()
     await message.answer('Выберите язык', reply_markup=generate_menu_language())
 
 
