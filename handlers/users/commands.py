@@ -14,7 +14,7 @@ async def command_start(message: Message):
     :param message:
     :return:
     """
-    await message.answer('Добро пожаловать в мир рыбы и хлеба')
+    await message.answer('Добро пожаловать')
     user = db.get_user_by_id(message.chat.id)
     if user:
         await show_main_menu(message)
