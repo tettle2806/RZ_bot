@@ -76,6 +76,11 @@ async def reaction_review(message: Message):
                          'Оцените нашу работу по 5 бальной шкале', reply_markup=generate_review())
 
 
+@dp.message_handler(regexp='🚩 К филиалам')
+async def back_filials(message: Message):
+    await message.answer('Выберите филиал', reply_markup=generate_filials())
+
+
 @dp.message_handler(regexp='☎ Связаться с нами')
 async def reaction_feedback(message: Message):
     await message.answer('<b>Единый call-center:</b> 1234 или +998(70) 123-45-67')
