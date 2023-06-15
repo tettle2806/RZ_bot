@@ -5,8 +5,9 @@ from aiogram.types import Message
 
 from data.loader import dp, db
 from keyboards.inline import generate_menu_language
-from keyboards.reply import generate_main_menu, settings, generate_type_of_order, generate_delivery, generate_menu, \
-    generate_location
+from keyboards.reply import generate_main_menu, settings, generate_type_of_order, generate_delivery, \
+    generate_menu_categories, \
+    generate_filials, generate_filials_info
 from states.states import NumberState
 
 
@@ -27,7 +28,6 @@ async def get_phone(message: Message, state: FSMContext):
     Проверка номера телефона
     если номер присутствует в базе данных то операция регистрации скипается,
     если же номера телефона нет он записывается вместе с остальными данными о пользователе
-
     :param message:
     :param state:
     :return:
@@ -61,12 +61,7 @@ async def reaction_on_delivery(message: Message):
 
 @dp.message_handler(regexp='🏃🏻‍♂️ Самовывоз')
 async def pickup_rection(message: Message):
-    await message.answer('Выберите филиал', reply_markup=generate_location())
-
-
-@dp.message_handler(regexp='Метро Айбека')
-async def aybek_metro(message: Message):
-    await message.answer('Приступим к заказу', reply_markup=generate_menu())
+    await message.answer('Выберите филиал', reply_markup=generate_filials())
 
 
 @dp.message_handler(regexp='📍 Язык')
@@ -113,3 +108,30 @@ async def show_main_menu(message: Message):
     :return:
     """
     await message.answer('Главное меню', reply_markup=generate_main_menu())
+
+
+filials = [i[0] for i in db.get_filials_names()]
+
+
+@dp.message_handler(lambda message: message.text in filials)
+async def show_menu(message: Message):
+    await message.answer('Выберите категорию', reply_markup=generate_menu_categories())
+
+
+filials_info = ['ℹ' + i[0] for i in db.get_filials_names()]
+
+
+@dp.message_handler(regexp='ℹ Информация')
+async def generate_menu_information(message: Message):
+    await message.answer('Какую информацию вы хотите получить?', reply_markup=generate_filials_info())
+
+
+@dp.message_handler(lambda message: message.text in filials_info)
+async def information_filials(message: Message):
+    mes = message.text
+    mess = mes.split('ℹ')
+    await message.answer('Информация:')
+    info = db.get_filial(mess[1])
+    text = f'Название филиала: {info[1]}\nВремя работы: {info[3]}\nПосадочные места: {info[2]}\nЛокация: {info[4]}\n'
+
+    await message.answer(text)

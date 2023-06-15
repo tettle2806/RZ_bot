@@ -4,7 +4,6 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 def generate_menu_language():
     """
     Генерирует инлайн кнопки для смены языка
-
     :return:
     """
     markup = InlineKeyboardMarkup(row_width=1)
