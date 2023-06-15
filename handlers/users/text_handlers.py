@@ -7,7 +7,7 @@ from data.loader import dp, db
 from keyboards.inline import generate_menu_language
 from keyboards.reply import generate_main_menu, settings, generate_type_of_order, generate_delivery, \
     generate_menu_categories, \
-    generate_filials, generate_filials_info
+    generate_filials, generate_filials_info, generate_review
 from states.states import NumberState
 
 
@@ -67,6 +67,18 @@ async def pickup_rection(message: Message):
 @dp.message_handler(regexp='📍 Язык')
 async def reaction_on_language(message: Message):
     await message.answer('Выберите язык', reply_markup=generate_menu_language())
+
+
+@dp.message_handler(regexp='✍ Оставить отзыв')
+async def reaction_review(message: Message):
+    await message.answer('✅Контроль сервиса доставки Fish and Bread\n'
+                         'Мы благодарим за сделанный выбор и будем рады, если Вы поможете улучшить качество нашего сервиса!\n'
+                         'Оцените нашу работу по 5 бальной шкале', reply_markup=generate_review())
+
+
+@dp.message_handler(regexp='☎ Связаться с нами')
+async def reaction_feedback(message: Message):
+    await message.answer('<b>Единый call-center:</b> 1234 или +998(70) 123-45-67')
 
 
 @dp.message_handler(regexp='⚙ Настройки')

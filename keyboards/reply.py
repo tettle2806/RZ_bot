@@ -104,3 +104,20 @@ def generate_filials_info():
     markup.add(*buttons)
     markup.add(back)
     return markup
+
+
+def generate_review():
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    back = KeyboardButton(text='⬅ Назад')
+    bt1 = KeyboardButton(text='😤Хочу пожаловатся 👎🏻')
+    bt2 = KeyboardButton(text='☹️Не понравилось, на 2 ⭐️⭐️')
+    bt3 = KeyboardButton(text='😐Удовлетворительно на 3 ⭐️⭐️⭐️')
+    bt4 = KeyboardButton(text='☺️Нормально, на 4 ⭐️⭐️⭐️⭐️')
+    bt5 = KeyboardButton(text='😊Все понравилось, на 5 ❤️')
+    markup.row(bt5)
+    markup.row(bt4)
+    markup.row(bt3)
+    markup.row(bt2)
+    markup.row(bt1)
+    markup.row(back)
+    return markup
