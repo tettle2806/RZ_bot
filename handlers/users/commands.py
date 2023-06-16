@@ -1,5 +1,6 @@
 from aiogram.types import Message
-from data.loader import bot, dp, db
+
+from data.loader import dp, db
 from .text_handlers import start_register, show_main_menu
 
 
@@ -13,6 +14,7 @@ async def command_start(message: Message):
     else:
         await start_register(message)
     # Начало регистрации по номеру
+
 
 @dp.message_handler(commands=['menu'])
 async def command_menu(message: Message):

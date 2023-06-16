@@ -1,63 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from database.database import DataBase
+
 from data.loader import db
-
-
-def refactor_phone():
-    markup = ReplyKeyboardMarkup(resize_keyboard=True)
-    manually = KeyboardButton(text='Ввести в ручную')
-    contact = KeyboardButton(text='Отправить контакт', request_contact=True)
-    back = KeyboardButton(text='⬅ Назад')
-    markup.row(manually, contact)
-    markup.row(back)
-    return markup
-
-
-def generate_menu_categories():
-    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    back = KeyboardButton(text='🚩 К филиалам')
-    cart = KeyboardButton(text='🛒 Корзина')
-    main_mark = KeyboardButton(text='⬅ Назад')
-    categories = [i[0] for i in db.get_categories()]
-    buuttons = []
-    for category in categories:
-        btn = KeyboardButton(text=category)
-        buuttons.append(btn)
-    markup.add(*buuttons, main_mark, back, cart)
-    return markup
-
-
-def generate_filials():
-    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    back = KeyboardButton(text='⬅ Назад')
-    filials = db.get_filials_names()
-    buttons = []
-    for filial in filials:
-        btn = KeyboardButton(text=filial[0])
-        buttons.append(btn)
-    markup.add(*buttons)
-    markup.add(back)
-    return markup
-
-
-def generate_type_of_order():
-    markup = ReplyKeyboardMarkup(resize_keyboard=True)
-    delivery = KeyboardButton(text='🚖 Доставка')
-    pickup = KeyboardButton(text='🏃🏻‍♂️ Самовывоз')
-    back = KeyboardButton(text='⬅ Назад')
-    markup.row(delivery, pickup)
-    markup.row(back)
-    return markup
-
-
-def generate_delivery():
-    markup = ReplyKeyboardMarkup(resize_keyboard=True)
-    location = KeyboardButton(text='🚩 Локация', request_location=True)
-    my_address = KeyboardButton(text='🗺 Мои адреса')
-    back = KeyboardButton(text='⬅ Назад')
-    markup.row(location, my_address)
-    markup.row(back)
-    return markup
 
 
 def generate_main_menu():
@@ -77,6 +20,16 @@ def generate_main_menu():
     return markup
 
 
+def generate_type_of_order():
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    delivery = KeyboardButton(text='🚖 Доставка')
+    pickup = KeyboardButton(text='🏃🏻‍♂️ Самовывоз')
+    back = KeyboardButton(text='⬅ Назад')
+    markup.row(delivery, pickup)
+    markup.row(back)
+    return markup
+
+
 def settings():
     """
     Кнопки меню настройки
@@ -93,9 +46,56 @@ def settings():
     return markup
 
 
+def refactor_phone():
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    manually = KeyboardButton(text='Ввести в ручную')
+    contact = KeyboardButton(text='Отправить контакт', request_contact=True)
+    back = KeyboardButton(text='⬅ Назад')
+    markup.row(manually, contact)
+    markup.row(back)
+    return markup
+
+
+def generate_menu_categories():
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    back = KeyboardButton(text='🚩 К филиалам')
+    cart = KeyboardButton(text='🛒 Корзина')
+    main_mark = KeyboardButton(text='⬅ Назад')
+    categories = [i[0] for i in db.get_categories()]
+    buttons = []
+    for category in categories:
+        btn = KeyboardButton(text=category)
+        buttons.append(btn)
+    markup.add(*buttons, main_mark, back, cart)
+    return markup
+
+
+def generate_filial():
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    back = KeyboardButton(text='⬅ Назад к доставке')
+    filials = db.get_filials_names()
+    buttons = []
+    for filial in filials:
+        btn = KeyboardButton(text=filial[0])
+        buttons.append(btn)
+    markup.add(*buttons)
+    markup.add(back)
+    return markup
+
+
+def generate_delivery():
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    location = KeyboardButton(text='🚩 Локация', request_location=True)
+    my_address = KeyboardButton(text='🗺 Мои адреса')
+    back = KeyboardButton(text='⬅ Назад')
+    markup.row(location, my_address)
+    markup.row(back)
+    return markup
+
+
 def generate_filials_info():
     markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    back = KeyboardButton(text='⬅ Назад')
+    back = KeyboardButton(text='⬅ Назад к информации')
     filials = db.get_filials_names()
     buttons = []
     for filial in filials:
@@ -103,6 +103,18 @@ def generate_filials_info():
         buttons.append(btn)
     markup.add(*buttons)
     markup.add(back)
+    return markup
+
+
+def menu_information():
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    back = KeyboardButton(text='⬅ Назад')
+    filial = KeyboardButton(text='🏪 О филиалах')
+    mobile_apps = KeyboardButton(text='📱 Мобильное приложение')
+    about_us = KeyboardButton(text='📃 О нас')
+    markup.row(filial)
+    markup.row(mobile_apps, about_us)
+    markup.row(back)
     return markup
 
 
