@@ -14,7 +14,8 @@ from keyboards.reply import \
     generate_filial, \
     generate_filials_info, \
     generate_review, \
-    menu_information
+    menu_information, \
+    generate_products
 from states.states import NumberState
 
 
@@ -112,7 +113,6 @@ async def mobile_app(message: Message):
 
 @dp.message_handler(regexp='📃 О нас')
 async def about_us(message: Message):
-    pic = open('logoRZ.png', mode='rb')
     text = f'Компания быстрого питания RZ FAST FOOD - это сеть ресторанов быстрого питания,\
 которая специализируется на предоставлении разнообразных блюд быстрого приготовления.\
 \n\nКомпания была создана в 2010 году и быстро стала одним из самых популярных ресторанов быстрого питания.\
@@ -125,7 +125,8 @@ async def about_us(message: Message):
 \n\nКомпания RZ FAST FOOD также активно поддерживает благотворительные проекты\
 и участвует в социально значимых мероприятиях,\
 с целью внести вклад в развитие общества и улучшение качества жизни людей.'
-    await bot.send_photo(photo=pic, chat_id=message.chat.id, caption=text)
+    with open('photo/logoRZ.png', mode='rb') as pic:
+        await bot.send_photo(photo=pic, chat_id=message.chat.id, caption=text)
 
 
 @dp.message_handler(regexp='🛍 Заказать')
@@ -177,10 +178,6 @@ filial_info = ['ℹ' + i[0] for i in db.get_filials_names()]
 @dp.message_handler(lambda message: message.text in filial_info)
 async def information_filial(message: Message):
     chat_id = message.chat.id
-    malika = open('malika.jpg', mode='rb')
-    chorsu = open('chorsu.jpg', mode='rb')
-    maksimka = open('maksimka.jpg', mode='rb')
-    chilanzar = open('chilanzar.jpg', mode='rb')
 
     mes = message.text
     mess = mes.split('ℹ')
@@ -189,13 +186,45 @@ async def information_filial(message: Message):
     text = f'Название филиала: {info[1]}\nВремя работы: {info[3]}\nПосадочные места: {info[2]}\nЛокация: {info[4]}\n'
     filial_name = info[1]
     if filial_name == 'Чиланзар':
-        await bot.send_photo(chat_id=chat_id, photo=chilanzar, caption=text)
+        with open('photo/chilanzar.jpg', mode='rb') as chilanzar:
+            await bot.send_photo(chat_id=chat_id, photo=chilanzar, caption=text)
     if filial_name == 'Малика':
-        await bot.send_photo(chat_id=chat_id, photo=malika, caption=text)
+        with open('photo/malika.jpg', mode='rb') as malika:
+            await bot.send_photo(chat_id=chat_id, photo=malika, caption=text)
     if filial_name == 'Максимка':
-        await bot.send_photo(chat_id=chat_id, photo=maksimka, caption=text)
+        with open('photo/maksimka.jpg', mode='rb') as maksimka:
+            await bot.send_photo(chat_id=chat_id, photo=maksimka, caption=text)
     if filial_name == 'Чорсу':
-        await bot.send_photo(chat_id=chat_id, photo=chorsu, caption=text)
+        with open('photo/chorsu.jpg', mode='rb') as chorsu:
+            await bot.send_photo(chat_id=chat_id, photo=chorsu, caption=text)
+
+
+category = [i[0] for i in db.get_categories()]
+print(category)
+
+
+@dp.message_handler(lambda message: message.text in category)
+async def reaction_on_category(message: Message):
+    mess = message.text
+    await message.answer('Выберите продукт', reply_markup=generate_products(mess))
+
+
+product = [i[0] for i in db.get_all_products()]
+print(product)
+
+
+@dp.message_handler(lambda message: message.text in product)
+async def get_info_products(message: Message):
+    chat_id = message.chat.id
+    text = db.get_products_by_title(message.text)
+    caption = f'Набор: {text[1]}\n\nОписание: {text[2]}\n\nЦена: {text[3]} сум\n\n'
+    with open(f'{text[4]}', mode='rb') as photo:
+        await bot.send_photo(chat_id=chat_id, photo=photo, caption=caption)
+
+
+@dp.message_handler(regexp='⬅ Назад к категориям')
+async def back_categories(message: Message):
+    await message.answer('Выберите категорию', reply_markup=generate_menu_categories())
 
 
 @dp.message_handler(regexp='🚩 К филиалам')

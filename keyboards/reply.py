@@ -133,3 +133,18 @@ def generate_review():
     markup.row(bt1)
     markup.row(back)
     return markup
+
+
+def generate_products(category_title):
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    back = KeyboardButton(text='⬅ Назад к категориям')
+    cart = KeyboardButton(text='🛒 Корзина')
+    products = db.get_products_by_category(category_title=category_title)
+    buttons = []
+    for product in products:
+        btn = KeyboardButton(text=product[0])
+        buttons.append(btn)
+    markup.add(*buttons)
+    markup.add(cart)
+    markup.add(back)
+    return markup

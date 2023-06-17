@@ -113,7 +113,53 @@ class DataBase:
 
     def drop(self):
         sql = '''
-            DROP TABLE filials
+            DROP TABLE products
         '''
 
         self.manager(sql, commit=True)
+
+    def create_products_table(self):
+        sql = '''
+            CREATE TABLE IF NOT EXISTS products(
+            product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_title VARCHAR(50) UNIQUE,
+            description VARCHAR(255),
+            price INTEGER,
+            image TEXT,
+            category_id INTEGER REFERENCES categories(category_id)
+            )
+        '''
+        self.manager(sql, commit=True)
+
+    def insert_products(self):
+        sql = '''
+           INSERT INTO products(product_title, description, price, image, category_id) VALUES
+           ('Фирменное комбо','Фирменный бургер, картошка-фри и кола 0.5 мл. Отличный выбор для тез кто любит утонченный вкус бургера с нашим фирменным соусом', 47500,'photo/1.jpg' , 1),
+           ('BBQ Delight','Комбо, которое включает в себя BBQ гамбургер, порцию картофеля фри и роскошный миндальный молочный коктейль.', 55000, 'photo/3.jpg', 1),
+           ('Комбо для гурманов','Комбо состоит из 6 палочек молотого шашлыка, 500 грамм куриных бедер и 500 грамм жаренных криветок во фритюре',320000, 'photo/2.jpg', 1),
+           ('Тройной Бургер',' Это комбо, включающее в себя три бургера на выбор: классический куриный, бекон-чеддер и бургер с брускеттой. К ним подается порция луковых колечек и газированный напиток на выбор из ассортимента',155000,'photo/4.jpeg', 1),
+           ('Большой Аппетит','Это комбо, идеальное для голодных гурманов! Оно включает в себя двойной гамбургер с квестом, большую порцию картофеля фри и большой несладкий чай',65000, 'photo/5.jpg', 1),
+           ('Kids-Комбо','Комбо для маленьких героев, куриный гамбургер с сыром и картошкой-фри и конечно же растишка что-бы наш герой рос большим ',40000, 'photo/6.jpg', 1)
+        '''
+        self.manager(sql, commit=True)
+
+    def get_products_by_category(self, category_title):
+        sql = '''
+            SELECT product_title FROM products WHERE category_id = (
+                SELECT category_id FROM categories WHERE category_title = ?
+            )
+        '''
+        return self.manager(sql, category_title, fetchall=True)
+
+    def get_products_by_title(self, product_title):
+        sql = '''
+            SELECT * FROM products WHERE product_title = ?
+        '''
+
+        return self.manager(sql, product_title, fetchone=True)
+
+    def get_all_products(self):
+        sql = '''
+            SELECT product_title FROM products
+        '''
+        return self.manager(sql, fetchall=True)
