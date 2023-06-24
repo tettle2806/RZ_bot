@@ -134,12 +134,6 @@ class DataBase:
     def insert_products(self):
         sql = '''
            INSERT INTO products(product_title, description, price, image, category_id) VALUES
-           ('Фирменное комбо','Фирменный бургер, картошка-фри и кола 0.5 мл. Отличный выбор для тез кто любит утонченный вкус бургера с нашим фирменным соусом', 47500,'photo/1.jpg' , 1),
-           ('BBQ Delight','Комбо, которое включает в себя BBQ гамбургер, порцию картофеля фри и роскошный миндальный молочный коктейль.', 55000, 'photo/3.jpg', 1),
-           ('Комбо для гурманов','Комбо состоит из 6 палочек молотого шашлыка, 500 грамм куриных бедер и 500 грамм жаренных криветок во фритюре',320000, 'photo/2.jpg', 1),
-           ('Тройной Бургер',' Это комбо, включающее в себя три бургера на выбор: классический куриный, бекон-чеддер и бургер с брускеттой. К ним подается порция луковых колечек и газированный напиток на выбор из ассортимента',155000,'photo/4.jpeg', 1),
-           ('Большой Аппетит','Это комбо, идеальное для голодных гурманов! Оно включает в себя двойной гамбургер с квестом, большую порцию картофеля фри и большой несладкий чай',65000, 'photo/5.jpg', 1),
-           ('Kids-Комбо','Комбо для маленьких героев, куриный гамбургер с сыром и картошкой-фри и конечно же растишка что-бы наш герой рос большим ',40000, 'photo/6.jpg', 1)
         '''
         self.manager(sql, commit=True)
 
@@ -163,3 +157,63 @@ class DataBase:
             SELECT product_title FROM products
         '''
         return self.manager(sql, fetchall=True)
+
+    def create_cart_table(self):
+        sql = '''
+        CREATE TABLE IF NOT EXISTS cart(
+            cart_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            telegram_id INTEGER REFERENCES users(telegram_id),
+            total_quantity INTEGER DEFAULT 0,
+            total_price INTEGER DEFAULT 0
+        )
+        '''
+        self.manager(sql, commit=True)
+
+    def create_cart_products_table(self):
+        sql = '''
+        CREATE TABLE IF NOT EXISTS cart_products(
+            cart_product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cart_id INTEGER REFERENCES cart(cart_id),
+            product_name VARCHAR(100) NOT NULL,
+            final_price INTEGER NOT NULL,
+            quantity INTEGER NOT NULL,
+
+            UNIQUE(cart_id, product_name)
+        )
+        '''
+        self.manager(sql, commit=True)
+
+    def create_cart_for_user(self, telegram_id):
+        sql = '''
+        INSERT INTO cart(telegram_id) VALUES (?)
+        '''
+        self.manager(sql, telegram_id, commit=True)
+
+    def get_cart_id(self, telegram_id):
+        sql = '''
+        SELECT cart_id FROM cart WHERE telegram_id = ?
+        '''
+        return self.manager(sql, telegram_id, fetchone=True)
+
+    def get_product_by_id(self, product_id):
+        sql = '''
+        SELECT product_title, price FROM products WHERE product_id = ?
+        '''
+        return self.manager(sql, product_id, fetchone=True)
+
+    def insert_cart_product(self, cart_id, product_name, quantity, final_price):
+        sql = '''
+        INSERT INTO cart_products(cart_id, product_name, quantity, final_price)
+        VALUES (?,?,?,?)
+        '''
+        self.manager(sql, cart_id, product_name, quantity, final_price, commit=True)
+
+    def update_cart_product(self, cart_id, product_name, quantity, final_price):
+        sql = '''
+        UPDATE cart_products
+        SET
+        quantity = quantity + ?,
+        final_price = final_price + ?
+        WHERE product_name = ? AND cart_id = ?
+        '''
+        self.manager(sql, quantity, final_price, product_name, cart_id, commit=True)

@@ -13,3 +13,16 @@ def generate_menu_language():
                                 callback_data='en')
     markup.add(ibt1, ibt2)
     return markup
+
+
+def generate_product_details(product_id, quantity=1):
+    markup = InlineKeyboardMarkup()
+    minus_button = InlineKeyboardButton('➖', callback_data='minus')
+    quan_button = InlineKeyboardButton(str(quantity), callback_data=f'quantity_{product_id}')
+    plus_btn = InlineKeyboardButton('➕', callback_data='plus')
+    buy_btn = InlineKeyboardButton('Хочу 🐱', callback_data=f'buy_{product_id}_{quantity}')
+    cart_btn = InlineKeyboardButton('🛒 Корзина', callback_data='cart')
+    markup.add(minus_button, quan_button, plus_btn)
+    markup.add(buy_btn)
+    markup.add(cart_btn)
+    return markup

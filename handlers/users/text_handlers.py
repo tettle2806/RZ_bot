@@ -4,7 +4,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
 from data.loader import dp, db, bot
-from keyboards.inline import generate_menu_language
+from keyboards.inline import generate_menu_language, generate_product_details
 from keyboards.reply import \
     generate_main_menu, \
     settings, \
@@ -200,7 +200,6 @@ async def information_filial(message: Message):
 
 
 category = [i[0] for i in db.get_categories()]
-print(category)
 
 
 @dp.message_handler(lambda message: message.text in category)
@@ -210,7 +209,6 @@ async def reaction_on_category(message: Message):
 
 
 product = [i[0] for i in db.get_all_products()]
-print(product)
 
 
 @dp.message_handler(lambda message: message.text in product)
@@ -219,7 +217,10 @@ async def get_info_products(message: Message):
     text = db.get_products_by_title(message.text)
     caption = f'Набор: {text[1]}\n\nОписание: {text[2]}\n\nЦена: {text[3]} сум\n\n'
     with open(f'{text[4]}', mode='rb') as photo:
-        await bot.send_photo(chat_id=chat_id, photo=photo, caption=caption)
+        await bot.send_photo(chat_id=chat_id,
+                             photo=photo,
+                             caption=caption,
+                             reply_markup=generate_product_details(text[0]))
 
 
 @dp.message_handler(regexp='⬅ Назад к категориям')

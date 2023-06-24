@@ -13,3 +13,6 @@ db = DataBase()
 # db.create_products_table()
 # db.insert_products()
 # # db.drop()
+#
+# db.create_cart_table()
+# db.create_cart_products_table()
