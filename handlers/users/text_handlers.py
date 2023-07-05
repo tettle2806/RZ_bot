@@ -4,7 +4,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
 from data.loader import dp, db, bot
-from keyboards.inline import generate_menu_language, generate_product_details
+from keyboards.inline import generate_menu_language, generate_product_details, generate_cart_buttons
 from keyboards.reply import \
     generate_main_menu, \
     settings, \
@@ -145,6 +145,35 @@ async def reaction_on_delivery(message: Message):
 async def pickup_reaction(message: Message):
     await message.answer('Выберите филиал',
                          reply_markup=generate_filial())
+
+
+@dp.message_handler(regexp='🛒 Корзина')
+async def reaction_on_crt_reply(message: Message):
+    chat_id = message.chat.id
+    if db.get_cart_id(chat_id):
+        cart_id = db.get_cart_id(chat_id)[0]
+    else:
+        db.create_cart_for_user(chat_id)
+        cart_id = db.get_cart_id(chat_id)[0]
+    # Обновить общее количество и общую сумму
+    # вытащить их потом вытащить все товары в корзине
+    # сформировать сообщение и отправить пользователю
+    db.update_cart_total_price_quantity(cart_id)
+    total_price, total_quantity = db.get_cart_total_price_quantity(cart_id)
+    try:
+        total_price, total_quantity = int(total_price), int(total_quantity)
+    except:
+        total_price, total_quantity = 0, 0
+    cart_product = db.get_cart_products_by_cart_id(cart_id)
+
+    text = '''Ваша корзина\n\n'''
+    print(total_price, total_quantity, cart_product)
+    for cart_produc in cart_product:
+        text += f'{cart_produc[2]} - {cart_produc[4]} шт - {cart_produc[3]} сум \n\n'
+
+    text += f'''Общее колличество:{total_quantity} шт
+    Общая стоимость: {total_price} сум'''
+    await bot.send_message(chat_id, text, reply_markup=generate_cart_buttons(cart_product, cart_id))
 
 
 @dp.message_handler(regexp='📍 Язык')

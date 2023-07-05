@@ -217,3 +217,35 @@ class DataBase:
         WHERE product_name = ? AND cart_id = ?
         '''
         self.manager(sql, quantity, final_price, product_name, cart_id, commit=True)
+
+    def update_cart_total_price_quantity(self, cart_id):
+        sql = '''
+            UPDATE cart
+            SET 
+            total_quantity = (
+                SELECT SUM(quantity) FROM cart_products WHERE cart_id = ?
+            ),
+            total_price = (
+                SELECT SUM(final_price) FROM cart_products WHERE cart_id = ?
+            )
+            WHERE cart_id = ?
+        '''
+        self.manager(sql, cart_id, cart_id, cart_id, commit=True)
+
+    def get_cart_total_price_quantity(self, cart_id):
+        sql = '''
+            SELECT total_price, total_quantity FROM cart WHERE cart_id = ?
+        '''
+        return self.manager(sql, cart_id, fetchone=True)
+
+    def get_cart_products_by_cart_id(self, cart_id):
+        sql = '''
+            SELECT * FROM cart_products WHERE cart_id = ?
+        '''
+        return self.manager(sql, cart_id, fetchall=True)
+
+    def delete_err(self):
+        sql = '''
+            DELETE FROM cart_products WHERE cart_product_id = 1
+        '''
+        self.manager(sql, commit=True)

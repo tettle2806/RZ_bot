@@ -26,3 +26,21 @@ def generate_product_details(product_id, quantity=1):
     markup.add(buy_btn)
     markup.add(cart_btn)
     return markup
+
+
+def generate_cart_buttons(cart_product, cart_id):
+    markup = InlineKeyboardMarkup()
+    # (4, 1, 'Kids-Комбо', 40000, 1)
+    for cart_produc in cart_product:
+        name = InlineKeyboardButton(text=cart_produc[2], callback_data='name')
+        minus = InlineKeyboardButton(text='-1', callback_data=f'remove_{cart_produc[0]}')
+        quan = InlineKeyboardButton(text=str(cart_produc[4]), callback_data='quan')
+        plus = InlineKeyboardButton(text='+1', callback_data=f'append_{cart_produc[0]}')
+        markup.row(name)
+        markup.row(minus, quan, plus)
+    clear = InlineKeyboardButton(text='Очистить', callback_data='clear')
+    order = InlineKeyboardButton(text='Купить', callback_data=f'order_{cart_id}')
+    main_menu = InlineKeyboardButton(text='Главное меню', callback_data='main_menu')
+    markup.row(clear, order)
+    markup.row(main_menu)
+    return markup
